@@ -34,15 +34,26 @@ class handler(BaseHTTPRequestHandler):
         # Prepare the result
         if not names:
             # If no names are provided, return all data
-            result = { "marks": list(DATA.values()) }
+            result = {"marks": list(DATA.values())}
         else:
             # If names are provided, return marks for those names
             marks = [DATA.get(name, None) for name in names]  # Returns None if name not found
-            result = { "marks": marks }
+            result = {"marks": marks}
 
         # Send response
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')  # Enable CORS
+        # Enable CORS for all origins
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
         self.wfile.write(json.dumps(result).encode('utf-8'))
+
+    def do_OPTIONS(self):
+        # Handle preflight requests for CORS
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
