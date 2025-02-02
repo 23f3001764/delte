@@ -32,8 +32,13 @@ class handler(BaseHTTPRequestHandler):
         names = query.get('name', [])
 
         # Prepare the result
-        marks = [DATA.get(name, None) for name in names]  # Returns None if name not found
-        result = {"marks": marks}
+        if not names:
+            # If no names are provided, return all data
+            result = {"marks": list(DATA.values())}
+        else:
+            # If names are provided, return marks for those names
+            marks = [DATA.get(name, None) for name in names]  # Returns None if name not found
+            result = {"marks": marks}
 
         # Send response
         self.send_response(200)
